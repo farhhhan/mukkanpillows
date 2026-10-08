@@ -43,11 +43,20 @@ export default function Catalog() {
   const canvasRef = useRef(null);
   const sectionRef = useRef(null);
   const [loadedCount, setLoadedCount] = useState(0);
+  const [forceLoaded, setForceLoaded] = useState(false);
   const [activeStep, setActiveStep] = useState(0);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setForceLoaded(true);
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
     const canvas = canvasRef.current;
+    if (!canvas) return;
     const context = canvas.getContext("2d");
 
     const dpr = window.devicePixelRatio || 1;
@@ -66,11 +75,15 @@ export default function Catalog() {
         setLoadedCount(loaded);
         if (i === 0) render(0);
       };
+      img.onerror = () => {
+        loaded++;
+        setLoadedCount(loaded);
+      };
       images.push(img);
     }
 
     const render = (index) => {
-      if (images[index]) {
+      if (images[index] && images[index].naturalWidth) {
         const img = images[index];
         const canvasW = window.innerWidth;
         const canvasH = window.innerHeight;
@@ -136,7 +149,7 @@ export default function Catalog() {
 
   return (
     <section className={styles.catalogSection} ref={sectionRef} id="collection">
-      {loadedCount < FRAME_COUNT && (
+      {loadedCount < FRAME_COUNT && !forceLoaded && (
         <div className={styles.loader}>
           Loading Collection... {Math.round((loadedCount / FRAME_COUNT) * 100)}%
         </div>

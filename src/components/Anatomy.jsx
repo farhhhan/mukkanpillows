@@ -12,11 +12,20 @@ export default function Anatomy() {
   const canvasRef = useRef(null);
   const sectionRef = useRef(null);
   const [loadedCount, setLoadedCount] = useState(0);
+  const [forceLoaded, setForceLoaded] = useState(false);
   const [activeStep, setActiveStep] = useState(0);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setForceLoaded(true);
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
     const canvas = canvasRef.current;
+    if (!canvas) return;
     const context = canvas.getContext("2d");
 
     // Fix high DPI screens
@@ -38,11 +47,15 @@ export default function Anatomy() {
           render(0);
         }
       };
+      img.onerror = () => {
+        loaded++;
+        setLoadedCount(loaded);
+      };
       images.push(img);
     }
 
     const render = (index) => {
-      if (images[index]) {
+      if (images[index] && images[index].naturalWidth) {
         const img = images[index];
         const canvasW = window.innerWidth;
         const canvasH = window.innerHeight;
@@ -118,7 +131,7 @@ export default function Anatomy() {
 
   return (
     <section className={styles.anatomySection} ref={sectionRef}>
-      {loadedCount < FRAME_COUNT && (
+      {loadedCount < FRAME_COUNT && !forceLoaded && (
         <div className={styles.loader}>
           Loading Interactive Experience... {Math.round((loadedCount / FRAME_COUNT) * 100)}%
         </div>
