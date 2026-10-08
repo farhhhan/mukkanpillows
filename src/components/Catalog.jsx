@@ -5,7 +5,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import styles from "./Catalog.module.css";
 
 const FRAME_COUNT = 300;
-const currentFrame = (index) => 
+const currentFrame = (index) =>
   `/assets/showcase-sequence/ezgif-frame-${(index + 1).toString().padStart(3, "0")}.png`;
 
 const products = [
@@ -13,28 +13,28 @@ const products = [
     id: "plush",
     name: "Mukkan Cloud Plush Pillow",
     desc: "Ultra-soft microfiber fill for a cloud-like sleep experience.",
-    price: "$120",
+    price: "₹1000",
     firmness: "Soft"
   },
   {
     id: "ortho",
     name: "Mukkan Contour Ortho Pillow",
     desc: "Ergonomic memory foam designed for optimal neck support.",
-    price: "$145",
+    price: "₹1200",
     firmness: "Firm"
   },
   {
     id: "frost",
     name: "Mukkan Frost Cooling Gel Pillow",
     desc: "Dual-sided cooling mesh, perfect for hot sleepers.",
-    price: "$160",
+    price: "₹1250",
     firmness: "Medium"
   },
   {
     id: "travel",
     name: "Mukkan Silk Touch Travel Pillow",
     desc: "Compact ergonomic support wrapped in premium silk.",
-    price: "$85",
+    price: "₹1500",
     firmness: "Medium"
   }
 ];
@@ -74,15 +74,15 @@ export default function Catalog() {
         const img = images[index];
         const canvasW = window.innerWidth;
         const canvasH = window.innerHeight;
-        
+
         // Responsive scaling
         const hRatio = canvasW / img.width;
         const vRatio = canvasH / img.height;
         const ratio = canvasW <= 768 ? hRatio : Math.max(hRatio, vRatio);
-        
+
         const centerShift_x = (canvasW - img.width * ratio) / 2;
         const centerShift_y = (canvasH - img.height * ratio) / 2;
-        
+
         context.clearRect(0, 0, canvasW, canvasH);
         context.drawImage(
           img,
@@ -141,22 +141,22 @@ export default function Catalog() {
           Loading Collection... {Math.round((loadedCount / FRAME_COUNT) * 100)}%
         </div>
       )}
-      
+
       <div className={styles.canvasContainer}>
         <canvas ref={canvasRef} className={styles.canvas}></canvas>
       </div>
-      
+
       <div className={styles.overlayUI}>
         {products.map((product, index) => (
-          <div 
-            key={product.id} 
+          <div
+            key={product.id}
             className={`${styles.productDetails} ${activeStep === index ? styles.active : ''}`}
           >
             <div className={styles.topContent}>
               <span className={styles.brandName}>Mukkan Collection</span>
               <h2>{product.name.replace('Mukkan ', '').replace(' Pillow', '')}</h2>
             </div>
-            
+
             <div className={styles.bottomContent}>
               <p className={styles.desc}>{product.desc}</p>
               <div className={styles.meta}>
