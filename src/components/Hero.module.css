@@ -1,0 +1,85 @@
+.heroContainer {
+  height: 400vh;
+  position: relative;
+  background-color: var(--background);
+}
+
+.stickyContainer {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1;
+}
+
+.loader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--background);
+  color: var(--text);
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: var(--font-rounded);
+}
+
+.loaderText {
+  font-size: 1.2rem;
+  letter-spacing: 0.1em;
+  font-weight: 500;
+}
+
+.textOverlay {
+  position: absolute;
+  z-index: 2;
+  text-align: center;
+  color: var(--text);
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+  pointer-events: none;
+  max-width: 800px;
+  padding: 0 20px;
+}
+
+.textOverlay.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.textOverlay h1 {
+  font-size: 4rem;
+  line-height: 1.1;
+  margin-bottom: 1rem;
+}
+
+.textOverlay h2 {
+  font-size: 3rem;
+  line-height: 1.2;
+}
+
+@media (max-width: 768px) {
+  .textOverlay h1 {
+    font-size: 2.5rem;
+  }
+  
+  .textOverlay h2 {
+    font-size: 2rem;
+  }
+}
