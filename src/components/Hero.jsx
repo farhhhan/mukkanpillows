@@ -6,7 +6,7 @@ import Navbar from "./Navbar";
 
 const FRAME_COUNT = 300;
 const currentFrame = (index) =>
-  `/assets/hero-sequence/ezgif-frame-${(index + 1).toString().padStart(3, "0")}.png`;
+  `/assets/hero-sequence-1/ezgif-frame-${(index + 1).toString().padStart(3, "0")}.webp`;
 
 export default function Hero() {
   const canvasRef = useRef(null);

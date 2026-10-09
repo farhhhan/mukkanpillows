@@ -6,7 +6,7 @@ import styles from "./Catalog.module.css";
 
 const FRAME_COUNT = 300;
 const currentFrame = (index) =>
-  `/assets/showcase-sequence/ezgif-frame-${(index + 1).toString().padStart(3, "0")}.png`;
+  `/assets/showcase-sequence/ezgif-frame-${(index + 1).toString().padStart(3, "0")}.webp`;
 
 const products = [
   {

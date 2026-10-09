@@ -6,7 +6,7 @@ import styles from "./Anatomy.module.css";
 
 const FRAME_COUNT = 300;
 const currentFrame = (index) => 
-  `/assets/anatomy-sequence/ezgif-frame-${(index + 1).toString().padStart(3, "0")}.png`;
+  `/assets/anatomy-sequence/ezgif-frame-${(index + 1).toString().padStart(3, "0")}.webp`;
 
 const LAYERS = [
   {
