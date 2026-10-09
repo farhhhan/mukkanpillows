@@ -13,7 +13,7 @@ export default function Hero() {
   const containerRef = useRef(null);
   const [loadedCount, setLoadedCount] = useState(0);
   const [forceLoaded, setForceLoaded] = useState(false);
-  const [images, setImages] = useState({ main: [], logo: [] });
+  const [images, setImages] = useState([]);
   const [scrollProgress, setScrollProgress] = useState(0);
 
   useEffect(() => {
@@ -24,9 +24,8 @@ export default function Hero() {
   }, []);
 
   useEffect(() => {
-    // Preload images
+    // Preload hero images only
     const preloadedImages = [];
-    const preloadedLogoImages = [];
     let loaded = 0;
 
     for (let i = 0; i < FRAME_COUNT; i++) {
@@ -41,12 +40,8 @@ export default function Hero() {
         setLoadedCount(loaded);
       };
       preloadedImages.push(img);
-
-      const logoImg = new Image();
-      logoImg.src = `/assets/contact-sequence/ezgif-frame-${(i + 1).toString().padStart(3, "0")}.png`;
-      preloadedLogoImages.push(logoImg);
     }
-    setImages({ main: preloadedImages, logo: preloadedLogoImages });
+    setImages(preloadedImages);
   }, []);
 
   const isLoaded = loadedCount >= FRAME_COUNT || forceLoaded;
@@ -71,8 +66,8 @@ export default function Hero() {
     // Draw frame
     const render = (index) => {
       currentFrameIndex = index;
-      if (images.main && images.main[index] && images.main[index].naturalWidth) {
-        const img = images.main[index];
+      if (images && images[index] && images[index].naturalWidth) {
+        const img = images[index];
         const canvasW = window.innerWidth;
         const canvasH = window.innerHeight;
         const isMobile = canvasW <= 768;
@@ -99,24 +94,6 @@ export default function Hero() {
           img,
           0, 0, img.width, img.height,
           centerShift_x, centerShift_y, img.width * ratio, img.height * ratio
-        );
-      }
-
-      // Render logo
-      const logoCanvas = document.getElementById('navbar-logo-canvas');
-      if (logoCanvas && images.logo && images.logo[index] && images.logo[index].naturalWidth) {
-        const logoCtx = logoCanvas.getContext('2d');
-        const logoImg = images.logo[index];
-        logoCtx.clearRect(0, 0, logoCanvas.width, logoCanvas.height);
-
-        const lRatio = Math.min(logoCanvas.width / logoImg.width, logoCanvas.height / logoImg.height);
-        const lShiftX = (logoCanvas.width - logoImg.width * lRatio) / 2;
-        const lShiftY = (logoCanvas.height - logoImg.height * lRatio) / 2;
-
-        logoCtx.drawImage(
-          logoImg,
-          0, 0, logoImg.width, logoImg.height,
-          lShiftX, lShiftY, logoImg.width * lRatio, logoImg.height * lRatio
         );
       }
     };

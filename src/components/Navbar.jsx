@@ -14,12 +14,15 @@ export default function Navbar() {
     <nav className={styles.navbar}>
       <div className={styles.container}>
         <Link href="/" className={styles.logoContainer} onClick={closeMenu}>
-          <canvas
-            id="navbar-logo-canvas"
-            width={160}
-            height={90}
-            className={styles.logoCanvas}
-          ></canvas>
+          <video
+            src="/assets/contact-bg.mp4"
+            autoPlay
+            loop
+            muted
+            playsInline
+            className={styles.logoVideo}
+            aria-label="Mukkans Pillow Logo"
+          />
         </Link>
         
         {/* Desktop Links */}
