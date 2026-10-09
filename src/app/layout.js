@@ -10,6 +10,14 @@ const roundedFont = Nunito({
 export const metadata = {
   title: "Mukkans Pillow | Sleep Re-engineered",
   description: "Premium ergonomic, memory foam, cooling, and plush microfiber pillows for every sleep style.",
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/icon.png", type: "image/png" },
+    ],
+    shortcut: "/favicon.ico",
+    apple: "/apple-icon.png",
+  },
 };
 
 export default function RootLayout({ children }) {
