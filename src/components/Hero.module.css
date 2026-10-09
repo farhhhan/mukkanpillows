@@ -8,6 +8,7 @@
   position: sticky;
   top: 0;
   height: 100vh;
+  height: 100dvh;
   overflow: hidden;
   display: flex;
   justify-content: center;
@@ -52,9 +53,9 @@
   color: var(--text);
   opacity: 0;
   transform: translateY(20px);
-  transition: opacity 0.8s ease, transform 0.8s ease;
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
   pointer-events: none;
-  max-width: 800px;
+  max-width: 820px;
   padding: 0 20px;
 }
 
@@ -64,22 +65,101 @@
 }
 
 .textOverlay h1 {
-  font-size: 4rem;
+  font-size: 3.8rem;
   line-height: 1.1;
-  margin-bottom: 1rem;
+  margin-bottom: 0.8rem;
+  letter-spacing: -1px;
 }
 
 .textOverlay h2 {
-  font-size: 3rem;
+  font-size: 2.8rem;
   line-height: 1.2;
+  margin-bottom: 0.8rem;
+  letter-spacing: -0.5px;
+}
+
+.subtitle {
+  font-size: 1.25rem;
+  color: #4a548c;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.scrollCue {
+  display: inline-block;
+  margin-top: 1.25rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--accent-orange);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  animation: bounceCue 2s infinite ease-in-out;
+}
+
+@keyframes bounceCue {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(6px); }
 }
 
 @media (max-width: 768px) {
-  .textOverlay h1 {
-    font-size: 2.5rem;
+  .textOverlay {
+    top: auto;
+    bottom: 8%;
+    left: 50%;
+    transform: translate(-50%, 15px);
+    width: calc(100% - 32px);
+    max-width: 440px;
+    padding: 1.25rem 1.4rem;
+    background: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-radius: 20px;
+    border: 1px solid rgba(44, 54, 127, 0.12);
+    box-shadow: 0 12px 36px rgba(44, 54, 127, 0.12);
   }
-  
+
+  .textOverlay.active {
+    transform: translate(-50%, 0);
+  }
+
+  .textOverlay h1 {
+    font-size: clamp(1.45rem, 5.8vw, 1.95rem);
+    line-height: 1.2;
+    margin-bottom: 0.35rem;
+    letter-spacing: -0.5px;
+  }
+
   .textOverlay h2 {
-    font-size: 2rem;
+    font-size: clamp(1.2rem, 5vw, 1.55rem);
+    line-height: 1.25;
+    margin-bottom: 0.35rem;
+  }
+
+  .subtitle {
+    font-size: clamp(0.85rem, 3.5vw, 0.95rem);
+    line-height: 1.4;
+    color: #444c77;
+  }
+
+  .scrollCue {
+    margin-top: 0.75rem;
+    font-size: 0.8rem;
   }
 }
+
+@media (max-width: 400px) {
+  .textOverlay {
+    bottom: 6%;
+    padding: 1rem 1.15rem;
+    width: calc(100% - 24px);
+  }
+
+  .textOverlay h1 {
+    font-size: 1.35rem;
+  }
+
+  .textOverlay h2 {
+    font-size: 1.15rem;
+  }
+}
+

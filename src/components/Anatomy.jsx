@@ -8,6 +8,25 @@ const FRAME_COUNT = 300;
 const currentFrame = (index) => 
   `/assets/anatomy-sequence/ezgif-frame-${(index + 1).toString().padStart(3, "0")}.png`;
 
+const LAYERS = [
+  {
+    title: "Outer Cover",
+    desc: "3D Quilted Fabric & Lavender Piping"
+  },
+  {
+    title: "Breathable Inner Mesh",
+    desc: "Protective airflow sleeve"
+  },
+  {
+    title: "Support Core",
+    desc: "Ergonomic memory foam foundation"
+  },
+  {
+    title: "Shredded Memory Foam & Fiber Fill",
+    desc: "Micro-responsive plush comfort"
+  }
+];
+
 export default function Anatomy() {
   const canvasRef = useRef(null);
   const sectionRef = useRef(null);
@@ -24,12 +43,14 @@ export default function Anatomy() {
 
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
+    ScrollTrigger.config({ ignoreMobileResize: true });
+
     const canvas = canvasRef.current;
     if (!canvas) return;
     const context = canvas.getContext("2d");
 
     // Fix high DPI screens
-    const dpr = window.devicePixelRatio || 1;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
     canvas.width = window.innerWidth * dpr;
     canvas.height = window.innerHeight * dpr;
     context.scale(dpr, dpr);
@@ -59,22 +80,25 @@ export default function Anatomy() {
         const img = images[index];
         const canvasW = window.innerWidth;
         const canvasH = window.innerHeight;
-        
-        // Responsive scaling logic
-        const hRatio = canvasW / img.width;
-        const vRatio = canvasH / img.height;
+        const isMobile = canvasW <= 768;
         
         let ratio;
-        if (canvasW <= 768) {
-            // On mobile devices, ensure the full width of the pillow is visible without aggressive cropping
-            ratio = hRatio;
+        if (isMobile) {
+          // Responsive scaling: pillow spans nicely across mobile screen without any cropping
+          const widthRatio = canvasW / 1400;
+          const maxHeightRatio = (canvasH * 0.48) / img.height;
+          ratio = Math.min(widthRatio, maxHeightRatio);
         } else {
-            // On desktop, stretch to cover the full width and height
-            ratio = Math.max(hRatio, vRatio);
+          // On desktop, stretch to cover full width and height
+          const hRatio = canvasW / img.width;
+          const vRatio = canvasH / img.height;
+          ratio = Math.max(hRatio, vRatio);
         }
         
         const centerShift_x = (canvasW - img.width * ratio) / 2;
-        const centerShift_y = (canvasH - img.height * ratio) / 2;
+        const centerShift_y = isMobile
+          ? (canvasH - img.height * ratio) * 0.42
+          : (canvasH - img.height * ratio) / 2;
         
         context.clearRect(0, 0, canvasW, canvasH);
         context.drawImage(
@@ -114,10 +138,12 @@ export default function Anatomy() {
 
     // Resize handler
     const handleResize = () => {
-      canvas.width = window.innerWidth * dpr;
-      canvas.height = window.innerHeight * dpr;
-      context.scale(dpr, dpr);
+      const currentDpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = window.innerWidth * currentDpr;
+      canvas.height = window.innerHeight * currentDpr;
+      context.scale(currentDpr, currentDpr);
       render(animationObj.frame);
+      ScrollTrigger.refresh();
     };
 
     window.addEventListener('resize', handleResize);
@@ -144,6 +170,7 @@ export default function Anatomy() {
 
       <canvas ref={canvasRef} className={styles.canvas}></canvas>
       
+      {/* Desktop Callouts */}
       <div className={`${styles.callout} ${styles.pos1} ${activeStep === 1 ? styles.active : ""}`}>
         <div className={styles.line}></div>
         <div className={`${styles.badge} glass`}>
@@ -175,6 +202,35 @@ export default function Anatomy() {
           <p>Micro-responsive plush comfort</p>
         </div>
       </div>
+
+      {/* Mobile Dedicated Layer Card */}
+      <div className={styles.mobileCardContainer}>
+        {activeStep === 0 ? (
+          <div className={`${styles.mobileLayerCard} glass`}>
+            <div className={styles.mobileHintHeader}>
+              <span className={styles.mobileHintTag}>Interactive Anatomy</span>
+            </div>
+            <p className={styles.mobileHintDesc}>Scroll down to peel back each layer ↓</p>
+          </div>
+        ) : (
+          <div className={`${styles.mobileLayerCard} glass ${styles.cardActive}`}>
+            <div className={styles.mobileCardHeader}>
+              <span className={styles.layerPill}>Layer 0{activeStep} of 04</span>
+              <div className={styles.layerDots}>
+                {[1, 2, 3, 4].map((step) => (
+                  <span
+                    key={step}
+                    className={`${styles.layerDot} ${activeStep === step ? styles.activeDot : ""}`}
+                  />
+                ))}
+              </div>
+            </div>
+            <h4>{LAYERS[activeStep - 1]?.title}</h4>
+            <p>{LAYERS[activeStep - 1]?.desc}</p>
+          </div>
+        )}
+      </div>
     </section>
   );
 }
+

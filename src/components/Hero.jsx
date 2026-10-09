@@ -56,21 +56,45 @@ export default function Hero() {
 
     const canvas = canvasRef.current;
     const context = canvas.getContext("2d");
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
 
-    // Draw first frame
+    const setupCanvas = () => {
+      canvas.width = window.innerWidth * dpr;
+      canvas.height = window.innerHeight * dpr;
+      context.scale(dpr, dpr);
+    };
+
+    setupCanvas();
+
+    let currentFrameIndex = 0;
+
+    // Draw frame
     const render = (index) => {
+      currentFrameIndex = index;
       if (images.main && images.main[index] && images.main[index].naturalWidth) {
-        // scale to fit/cover
         const img = images.main[index];
-        const hRatio = canvas.width / img.width;
-        const vRatio = canvas.height / img.height;
-        const ratio = Math.max(hRatio, vRatio);
-        const centerShift_x = (canvas.width - img.width * ratio) / 2;
-        const centerShift_y = (canvas.height - img.height * ratio) / 2;
+        const canvasW = window.innerWidth;
+        const canvasH = window.innerHeight;
+        const isMobile = canvasW <= 768;
 
-        context.clearRect(0, 0, canvas.width, canvas.height);
+        let ratio;
+        if (isMobile) {
+          // On mobile, ensure the whole pillow contour is visible without 75% cropping
+          const widthRatio = (canvasW / img.width) * 1.28;
+          const maxHeightRatio = (canvasH * 0.52) / img.height;
+          ratio = Math.min(widthRatio, maxHeightRatio);
+        } else {
+          // On desktop widescreen, cover the view
+          ratio = Math.max(canvasW / img.width, canvasH / img.height);
+        }
+
+        const centerShift_x = (canvasW - img.width * ratio) / 2;
+        // On mobile, center slightly above middle to leave room for the bottom text card
+        const centerShift_y = isMobile
+          ? (canvasH - img.height * ratio) * 0.44
+          : (canvasH - img.height * ratio) / 2;
+
+        context.clearRect(0, 0, canvasW, canvasH);
         context.drawImage(
           img,
           0, 0, img.width, img.height,
@@ -85,7 +109,6 @@ export default function Hero() {
         const logoImg = images.logo[index];
         logoCtx.clearRect(0, 0, logoCanvas.width, logoCanvas.height);
 
-        // Fit logo properly inside the small canvas
         const lRatio = Math.min(logoCanvas.width / logoImg.width, logoCanvas.height / logoImg.height);
         const lShiftX = (logoCanvas.width - logoImg.width * lRatio) / 2;
         const lShiftY = (logoCanvas.height - logoImg.height * lRatio) / 2;
@@ -118,8 +141,18 @@ export default function Hero() {
       requestAnimationFrame(() => render(frameIndex));
     };
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    const handleResize = () => {
+      setupCanvas();
+      render(currentFrameIndex);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleResize);
+    };
   }, [isLoaded, images]);
 
   return (
@@ -137,21 +170,25 @@ export default function Hero() {
 
         {/* Overlays */}
         <div
-          className={`${styles.textOverlay} ${scrollProgress > 0.1 && scrollProgress < 0.35 ? styles.active : ""}`}
+          className={`${styles.textOverlay} ${scrollProgress < 0.35 ? styles.active : ""}`}
         >
           <h1>MUKKAN — Sleep Re-engineered.</h1>
+          <p className={styles.subtitle}>Precision ergonomic contouring for zero-strain sleep.</p>
+          <div className={styles.scrollCue}>Scroll to explore ↓</div>
         </div>
 
         <div
-          className={`${styles.textOverlay} ${scrollProgress > 0.4 && scrollProgress < 0.65 ? styles.active : ""}`}
+          className={`${styles.textOverlay} ${scrollProgress >= 0.35 && scrollProgress < 0.68 ? styles.active : ""}`}
         >
           <h2>Ergonomic Contour & Zero-Pressure Support.</h2>
+          <p className={styles.subtitle}>Adaptive curves designed to align your spine effortlessly.</p>
         </div>
 
         <div
-          className={`${styles.textOverlay} ${scrollProgress > 0.7 && scrollProgress <= 1.0 ? styles.active : ""}`}
+          className={`${styles.textOverlay} ${scrollProgress >= 0.68 && scrollProgress <= 1.0 ? styles.active : ""}`}
         >
           <h2>A Pillow For Every Sleep Style.</h2>
+          <p className={styles.subtitle}>Back, side, or stomach sleepers — engineered for all.</p>
         </div>
       </div>
     </div>
